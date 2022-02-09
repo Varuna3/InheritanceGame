@@ -51,6 +51,7 @@ public class RTSPanel extends JPanel {
 	private final int MAX_HORIZONTAL = 1920;
 	private List<UnitAbstract> units = new ArrayList<UnitAbstract>();
 	private List<UnitAbstract> selectedUnits = new ArrayList<UnitAbstract>();
+	private List<Pacman> pacmen = new ArrayList<Pacman>();
 	// public static Queue<UnitAbstract> selectedQueue = new LinkedList<>();
 
 	private JButton knightBtn, peonBtn, archerBtn, pacmanBtn, exitBtn, startBtn, pauseBtn, resetBtn;
@@ -133,6 +134,7 @@ public class RTSPanel extends JPanel {
 			// g.draw(SelectedRect);
 			
 			// **************************** New-Logic **********************
+			addPacmen();
 			wanderAround();
 			ShouldTakeDamage();
 			// ******************************** End-New-Logic **********************
@@ -143,6 +145,14 @@ public class RTSPanel extends JPanel {
 		// alfred.getScaleX(), alfred.getScaleY(), null);
 		// g.drawImage(lance.getSelectedImage(), lance.getxLoc(), lance.getyLoc(),
 		// lance.getScaleX(), lance.getScaleY(), null);
+	}
+
+	private void addPacmen() {
+		for (UnitAbstract ua : units) {
+			if(ua.getType() == "Pacman") {
+				pacmen.add((Pacman)ua);
+			}
+		}
 	}
 
 	private void wanderAround() {
@@ -627,8 +637,6 @@ public class RTSPanel extends JPanel {
 		for (UnitAbstract ua : units) {
 			if(ua.getType() == "Pacman") {
 				pacRect = new Rectangle(ua.getxLoc(), ua.getyLoc(), ua.getScaleX(), ua.getScaleY());
-				
-
 			} else if(ua.getType() == "Archer") {
 				if(pacRect.contains(ua.getxLoc(), ua.getyLoc())) {
 					if(ua.getCurrentHp() - 50 > 0) {
@@ -698,7 +706,7 @@ public class RTSPanel extends JPanel {
 			for (UnitAbstract ua : units) {
 				if ((ua.getxDest() != null) && (ua.getyDest() != null)) {
 					if (ua.getxDest() != ua.getxLoc() && ua.getyDest() != ua.getyLoc()) {
-						ua.setVelocity(10);
+						// ua.setVelocity(10);
 						
 						int xDist, yDist;
 	
@@ -711,19 +719,67 @@ public class RTSPanel extends JPanel {
 						velocityY = ua.getVelocity() - velocityX;
 	
 						if (ua.getyDest() < ua.getyLoc() && ua.getxDest() < ua.getxLoc()) { // Above and left
-							ua.setSelectedImage(ua.getlImage());
+							if(ua.getType() == "Pacman") {
+								for (Pacman p : pacmen) {
+									if(p.getIsStrong() == true) {
+										p.setSelectedImage(p.getSLI());
+										p.setVelocity(50);
+									} else {
+										p.setSelectedImage(p.getNSLI());
+										p.setVelocity(20);
+									}
+								}
+							} else {
+								ua.setSelectedImage(ua.getlImage());
+							}
 							ua.move(-velocityX, -velocityY);
 						}
 						else if (ua.getyDest() < ua.getyLoc() && ua.getxDest() > ua.getxLoc()) { // Above and right
-							ua.setSelectedImage(ua.getrImage());
+							if(ua.getType() == "Pacman") {
+								for (Pacman p : pacmen) {
+									if(p.getIsStrong() == true) {
+										p.setSelectedImage(p.getSRI());
+										p.setVelocity(50);
+									} else {
+										p.setSelectedImage(p.getNSRI());
+										p.setVelocity(20);
+									}
+								}
+							} else {
+								ua.setSelectedImage(ua.getrImage());
+							}
 							ua.move(+velocityX, -velocityY);
 						}
 						else if (ua.getyDest() > ua.getyLoc() && ua.getxDest() > ua.getxLoc()) { // Down and right
-							ua.setSelectedImage(ua.getrImage());
+							if(ua.getType() == "Pacman") {
+								for (Pacman p : pacmen) {
+									if(p.getIsStrong() == true) {
+										p.setSelectedImage(p.getSRI());
+										p.setVelocity(50);
+									} else {
+										p.setSelectedImage(p.getNSRI());
+										p.setVelocity(20);
+									}
+								}
+							} else {
+								ua.setSelectedImage(ua.getrImage());
+							}
 							ua.move(+velocityX, +velocityY);
 						}
 						else if (ua.getyDest() > ua.getyLoc() && ua.getxDest() < ua.getxLoc()) { // Down and left
-							ua.setSelectedImage(ua.getlImage());
+							if(ua.getType() == "Pacman") {
+								for (Pacman p : pacmen) {
+									if(p.getIsStrong() == true) {
+										p.setSelectedImage(p.getSLI());
+										p.setVelocity(50);
+									} else {
+										p.setSelectedImage(p.getNSLI());
+										p.setVelocity(20);
+									}
+								}
+							} else {
+								ua.setSelectedImage(ua.getlImage());
+							}
 							ua.move(-velocityX, +velocityY);
 						}
 						if (xDist < velocityX) {
@@ -817,6 +873,8 @@ public class RTSPanel extends JPanel {
 				}
 			}
 			SelectedRect = null;
+
+			
 		}
 
 		public void mouseClicked(MouseEvent e) {
@@ -861,12 +919,16 @@ public class RTSPanel extends JPanel {
 
 				}
 			 } 
-			//  else if(e.getButton() == 2) {
-			// 	 System.out.println(pacX + " " + pacY + " ");
-			// 	 for (UnitAbstract ua : units) {
-			// 		 System.out.println(ua.getCenterX() + " " + ua.getCenterY());
-			// 	 }
-			//  }
+			 else if(e.getButton() == 2) {
+				 for (Pacman p : pacmen) {
+					 if(p.getIsStrong() == true) {
+						 p.setIsStrong(false);
+					 } else if(p.getIsStrong() == false){
+					 p.setIsStrong(true);
+					 }
+				 }
+				 repaint();
+			 }
 		}
 	}
 
