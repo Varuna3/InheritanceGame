@@ -1,14 +1,9 @@
 package InheritanceGame;
 import java.awt.Color;
 import java.awt.Container;
-import java.awt.Cursor;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.io.IOException;
-import java.io.InputStream;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
@@ -39,7 +34,6 @@ public class RTSGGUI {
 //		mb.setOpaque(false);
 //		mb.setForeground(Color.green);
 		
-		gui.setCursor(Cursor.HAND_CURSOR);
 //		gui.setOpacity(.5f);
 		
 		

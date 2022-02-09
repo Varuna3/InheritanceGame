@@ -1,8 +1,6 @@
 package InheritanceGame;
 import java.awt.Image;
 
-import javax.swing.ImageIcon;
-
 public abstract class VehicleAbstract extends UnitAbstract {
 	private int repairInterval;
 

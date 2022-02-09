@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -13,42 +12,25 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
-import java.io.File;
-import java.io.IOException;
-import java.security.AllPermission;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
+// import java.util.Arrays;
 import java.util.List;
-import java.util.Queue;
 import java.util.Random;
-import java.util.Scanner;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-//import javax.swing.Timer;
 import javax.swing.KeyStroke;
 import javax.swing.border.Border;
 
 public class RTSPanel extends JPanel {
 	private Image bg;
-	private Peon alfred;
-	private Knight lance;
 	private javax.swing.Timer timer;
 	private javax.swing.Timer moveTimer;
-	private final int MIN_VERTICAL = 0;
-	private final int MAX_VERTICAL = 1080;
-	private final int MIN_HORIZONTAL = 0;
-	private final int MAX_HORIZONTAL = 1920;
 	private List<UnitAbstract> units = new ArrayList<UnitAbstract>();
 	private List<UnitAbstract> selectedUnits = new ArrayList<UnitAbstract>();
 	private List<Pacman> pacmen = new ArrayList<Pacman>();
@@ -57,19 +39,16 @@ public class RTSPanel extends JPanel {
 	private JButton knightBtn, peonBtn, archerBtn, pacmanBtn, exitBtn, startBtn, pauseBtn, resetBtn;
 	private JButton removeKBtn, removePBtn, removeABtn, removePMBtn;
 	private JMenuBar mb;
-	private JPanel southPnl, westPnl, northPnl;
+	private JPanel northPnl;
 
-	private int pacX, pacY;
 
 	private int siberiaX = 100000000, siberiaY = 1000000000;
 
-	private int /*xDest, yDest, */ initialxDest, initialyDest;
-
 	private Rectangle SelectedRect;
 
-	private int retardCount = 0;
-
 	private Rectangle pacRect;
+
+	private Boolean deadly = false;
 
 	private int velocityX;
 	private int velocityY;
@@ -80,8 +59,6 @@ public class RTSPanel extends JPanel {
 	private int selectionRectBRY;
 	private int selectionRectWidth;
 	private int selectionRectHeight;
-
-	private UnitAbstract selectedUnit = null;
 
 	public RTSPanel(JMenuBar mb) {
 		bg = GetImage.get("/Images/RTSBG.png");
@@ -110,17 +87,19 @@ public class RTSPanel extends JPanel {
 		g.drawImage(bg, 0, 0, 1920, 1080, null);
 		repaint();
 		for (UnitAbstract ua : units) {
-
 			g.drawImage(ua.getSelectedImage(), ua.getxLoc(), ua.getyLoc(), ua.getScaleX(), ua.getScaleY(), null);
 			repaint();
-			g.setColor(Color.RED);
-			double healthBarWidth = 75;
-			g.fillRoundRect(ua.getxLoc() + 10, ua.getyLoc() - 10, (int)healthBarWidth, 10, 10, 10);
-			g.setColor(Color.CYAN);
-			double percentHealth = ((double)ua.getCurrentHp() / (double)ua.getHp());
-			healthBarWidth = healthBarWidth * percentHealth;
-			// ua.setCurrentHp(50);
-			g.fillRoundRect(ua.getxLoc() + 10, ua.getyLoc() - 10, (int)healthBarWidth, 10, 10, 10);
+			if(ua.getType() != "Pacman") {
+				g.setColor(Color.RED);
+				double healthBarWidth = 75;
+				g.fillRoundRect(ua.getxLoc() + 10, ua.getyLoc() - 10, (int)healthBarWidth, 10, 10, 10);
+				g.setColor(Color.CYAN);
+				double percentHealth = ((double)ua.getCurrentHp() / (double)ua.getHp());
+				healthBarWidth = healthBarWidth * percentHealth;
+				// ua.setCurrentHp(50);
+				g.fillRoundRect(ua.getxLoc() + 10, ua.getyLoc() - 10, (int)healthBarWidth, 10, 10, 10);
+
+			}
 
 
 
@@ -135,6 +114,7 @@ public class RTSPanel extends JPanel {
 			
 			// **************************** New-Logic **********************
 			addPacmen();
+			pacIsDeadly();
 			wanderAround();
 			ShouldTakeDamage();
 			// ******************************** End-New-Logic **********************
@@ -159,8 +139,8 @@ public class RTSPanel extends JPanel {
 		for (UnitAbstract ua : units) {
 			if(ua.getType() == "Archer") {
 				// if(ua.getxDest() == ua.getxLoc() && ua.getyDest() == ua.getyLoc()) {
-					ua.setxDest(rand.nextInt(1100));
-					ua.setyDest(rand.nextInt(500));
+					ua.setxDest(rand.nextInt(1700));
+					ua.setyDest(rand.nextInt(900));
 				// }
 			}
 		}
@@ -168,8 +148,8 @@ public class RTSPanel extends JPanel {
 		for (UnitAbstract ua : units) {
 			if(ua.getType() == "Peon") {
 				// if(ua.getxDest() == ua.getxLoc() && ua.getyDest() == ua.getyLoc()) {
-					ua.setxDest(rand.nextInt(1100));
-					ua.setyDest(rand.nextInt(500));
+					ua.setxDest(rand.nextInt(1700));
+					ua.setyDest(rand.nextInt(900));
 					System.out.println(ua.getVelocity());
 				// }
 			}
@@ -178,64 +158,64 @@ public class RTSPanel extends JPanel {
 		for (UnitAbstract ua : units) {
 			if(ua.getType() == "Knight") {
 				// if(ua.getxDest() == ua.getxLoc() && ua.getyDest() == ua.getyLoc()) {
-					ua.setxDest(rand.nextInt(1100));
-					ua.setyDest(rand.nextInt(500));
+					ua.setxDest(rand.nextInt(1700));
+					ua.setyDest(rand.nextInt(900));
 				// }
 			}
 		}
 	}
 
-	private void selectionSort() {
+	// private void selectionSort() {
 
-		System.out.println("********************************SELECTION SORT********************************");
-		for (UnitAbstract ua : units) {
-			System.out.println(ua);
-		}
-		SortClass sc = new SortClass();
+	// 	System.out.println("********************************SELECTION SORT********************************");
+	// 	for (UnitAbstract ua : units) {
+	// 		System.out.println(ua);
+	// 	}
+	// 	SortClass sc = new SortClass();
 
-		UnitAbstract[] temp = units.toArray(new UnitAbstract[0]);
-		sc.selectionSort(temp);
-		units = Arrays.asList(temp);
-		System.out.println("********************************SORTED********************************");
-		// for (UnitAbstract ua : units) {
-		// System.out.println(ua);
-		// }
-		units.forEach(u -> System.out.println(u));
-	}
+	// 	UnitAbstract[] temp = units.toArray(new UnitAbstract[0]);
+	// 	sc.selectionSort(temp);
+	// 	units = Arrays.asList(temp);
+	// 	System.out.println("********************************SORTED********************************");
+	// 	// for (UnitAbstract ua : units) {
+	// 	// System.out.println(ua);
+	// 	// }
+	// 	units.forEach(u -> System.out.println(u));
+	// }
 
-	private void bubbleSort() {
-		System.out.println("********************************BUBBLE SORT********************************");
-		for (UnitAbstract ua : units) {
-			System.out.println(ua);
-		}
-		SortClass sc = new SortClass();
+	// private void bubbleSort() {
+	// 	System.out.println("********************************BUBBLE SORT********************************");
+	// 	for (UnitAbstract ua : units) {
+	// 		System.out.println(ua);
+	// 	}
+	// 	SortClass sc = new SortClass();
 
-		UnitAbstract[] temp = units.toArray(new UnitAbstract[0]);
-		sc.bubbleSort(temp);
-		units = Arrays.asList(temp);
-		System.out.println("********************************SORTED********************************");
-		// for (UnitAbstract ua : units) {
-		// System.out.println(ua);
-		// }
-		units.forEach(u -> System.out.println(u));
-	}
+	// 	UnitAbstract[] temp = units.toArray(new UnitAbstract[0]);
+	// 	sc.bubbleSort(temp);
+	// 	units = Arrays.asList(temp);
+	// 	System.out.println("********************************SORTED********************************");
+	// 	// for (UnitAbstract ua : units) {
+	// 	// System.out.println(ua);
+	// 	// }
+	// 	units.forEach(u -> System.out.println(u));
+	// }
 
-	private void insertionSort() {
-		System.out.println("********************************INSERTION SORT********************************");
-		for (UnitAbstract ua : units) {
-			System.out.println(ua);
-		}
-		SortClass sc = new SortClass();
+	// private void insertionSort() {
+	// 	System.out.println("********************************INSERTION SORT********************************");
+	// 	for (UnitAbstract ua : units) {
+	// 		System.out.println(ua);
+	// 	}
+	// 	SortClass sc = new SortClass();
 
-		UnitAbstract[] temp = units.toArray(new UnitAbstract[0]);
-		sc.insertionSort(temp);
-		units = Arrays.asList(temp);
-		System.out.println("********************************SORTED********************************");
-		// for (UnitAbstract ua : units) {
-		// System.out.println(ua);
-		// }
-		units.forEach(u -> System.out.println(u));
-	}
+	// 	UnitAbstract[] temp = units.toArray(new UnitAbstract[0]);
+	// 	sc.insertionSort(temp);
+	// 	units = Arrays.asList(temp);
+	// 	System.out.println("********************************SORTED********************************");
+	// 	// for (UnitAbstract ua : units) {
+	// 	// System.out.println(ua);
+	// 	// }
+	// 	units.forEach(u -> System.out.println(u));
+	// }
 
 	private void loadMenu() {
 		JMenu fileMnu = new JMenu("file");
@@ -322,9 +302,9 @@ public class RTSPanel extends JPanel {
 		rarcherMi.setAccelerator(KeyStroke.getKeyStroke("ctrl A"));
 		rpacmanMi.setAccelerator(KeyStroke.getKeyStroke("ctrl M"));
 
-		selectionMi.addActionListener(event -> selectionSort());
-		bubbleMi.addActionListener(event -> bubbleSort());
-		insertionMi.addActionListener(event -> insertionSort());
+		// selectionMi.addActionListener(event -> selectionSort());
+		// bubbleMi.addActionListener(event -> bubbleSort());
+		// insertionMi.addActionListener(event -> insertionSort());
 
 	}
 
@@ -345,8 +325,6 @@ public class RTSPanel extends JPanel {
 		this.add(northPnl, BorderLayout.NORTH);
 		// northPnl.setBorder(new EmptyBorder(new Insets(10, 20, 10, 20)));
 
-		Border etched = BorderFactory.createEtchedBorder();
-		Border titled = BorderFactory.createTitledBorder(etched, "Test Border");
 		Border raisedBevel = BorderFactory.createRaisedBevelBorder();
 
 		northPnl.setBorder(raisedBevel);
@@ -365,32 +343,31 @@ public class RTSPanel extends JPanel {
 		removeABtn = new JButton("Remove Archers");
 		removePMBtn = new JButton("Remove Pacmen");
 
-		// add file chooser
-		JButton fileBtn = new JButton("Select File");
-		northPnl.add(fileBtn);
-		File selected;
-		fileBtn.addActionListener(new FileAction());
+		// // add file chooser
+		// JButton fileBtn = new JButton("Select File");
+		// northPnl.add(fileBtn);
+		// fileBtn.addActionListener(new FileAction());
 
-		// add combo box
-		String[] cbModel = { "Knight", "Peon", "Archer", "Pacman" };
-		JComboBox unitsCB = new JComboBox(cbModel);
-		northPnl.add(unitsCB);
-		unitsCB.addActionListener(event -> {
-			int index = unitsCB.getSelectedIndex();
-			if (index == 0) {
-				System.out.println("Knight Selected");
+		// // add combo box
+		// String[] cbModel = { "Knight", "Peon", "Archer", "Pacman" };
+		// JComboBox unitsCB = new JComboBox(cbModel);
+		// northPnl.add(unitsCB);
+		// unitsCB.addActionListener(event -> {
+		// 	int index = unitsCB.getSelectedIndex();
+		// 	if (index == 0) {
+		// 		System.out.println("Knight Selected");
 
-			} else if (index == 1) {
-				System.out.println("Peon Selected");
+		// 	} else if (index == 1) {
+		// 		System.out.println("Peon Selected");
 
-			} else if (index == 2) {
-				System.out.println("Archer Selected");
+		// 	} else if (index == 2) {
+		// 		System.out.println("Archer Selected");
 
-			} else if (index == 3) {
-				System.out.println("Pacman Selected");
+		// 	} else if (index == 3) {
+		// 		System.out.println("Pacman Selected");
 
-			}
-		});
+		// 	}
+		// });
 
 		// add to panel
 		northPnl.add(Box.createRigidArea(new Dimension(200, 0)));
@@ -504,8 +481,8 @@ public class RTSPanel extends JPanel {
 
 		for (int i = 0; i < 1; i++) {
 			Random rand = new Random();
-			int x = rand.nextInt(1200) + 50;
-			int y = rand.nextInt(668) + 50;
+			int x = rand.nextInt(1600) + 50;
+			int y = rand.nextInt(800) + 50;
 			int h = rand.nextInt(2); // 0 = up, 1 = down
 			int b = rand.nextInt(2); // 0 = left, 1 = right
 			Knight k = new Knight(x, y);
@@ -524,8 +501,8 @@ public class RTSPanel extends JPanel {
 
 		for (int i = 0; i < 1; i++) {
 			Random rand = new Random();
-			int x = rand.nextInt(1200) + 50;
-			int y = rand.nextInt(668) + 50;
+			int x = rand.nextInt(1600) + 50;
+			int y = rand.nextInt(800) + 50;
 			int h = rand.nextInt(2); // 0 = up, 1 = down
 			int b = rand.nextInt(2); // 0 = left, 1 = right
 			Peon k = new Peon(x, y);
@@ -544,8 +521,8 @@ public class RTSPanel extends JPanel {
 
 		for (int i = 0; i < 1; i++) {
 			Random rand = new Random();
-			int x = rand.nextInt(1200) + 50;
-			int y = rand.nextInt(668) + 50;
+			int x = rand.nextInt(1600) + 50;
+			int y = rand.nextInt(800) + 50;
 			int h = rand.nextInt(2); // 0 = up, 1 = down
 			int b = rand.nextInt(2); // 0 = left, 1 = right
 			Archer k = new Archer(x, y);
@@ -564,8 +541,8 @@ public class RTSPanel extends JPanel {
 
 		for (int i = 0; i < 1; i++) {
 			Random rand = new Random();
-			int x = rand.nextInt(1200) + 50;
-			int y = rand.nextInt(668) + 50;
+			int x = rand.nextInt(1600) + 50;
+			int y = rand.nextInt(800) + 50;
 			int h = rand.nextInt(2); // 0 = up, 1 = down
 			int b = rand.nextInt(2); // 0 = left, 1 = right
 			Pacman k = new Pacman(x, y);
@@ -639,43 +616,81 @@ public class RTSPanel extends JPanel {
 				pacRect = new Rectangle(ua.getxLoc(), ua.getyLoc(), ua.getScaleX(), ua.getScaleY());
 			} else if(ua.getType() == "Archer") {
 				if(pacRect.contains(ua.getxLoc(), ua.getyLoc())) {
-					if(ua.getCurrentHp() - 50 > 0) {
-						// ua.takeDamage(10);
-						ua.setxLoc(rand.nextInt(1100));
-						ua.setyLoc(rand.nextInt(500));
-						ua.takeDamage(50);
+					if(deadly == true) {
+					
+						if(ua.getCurrentHp() - 50 > 0) {
+							// ua.takeDamage(10);
+							ua.setxLoc(rand.nextInt(1100));
+							ua.setyLoc(rand.nextInt(500));
+							ua.takeDamage(50);
+						} else {
+							ua.setxLoc(siberiaX);
+							ua.setyLoc(siberiaY);
+						}
+					
 					} else {
-						ua.setxLoc(siberiaX);
-						ua.setyLoc(siberiaY);
+					hurtPacman();
 					}
 				}
-			} else if(ua.getType() == "Knight") {
+			}
+			 else if(ua.getType() == "Knight") {
 				if(pacRect.contains(ua.getxLoc(), ua.getyLoc())) {
-					if(ua.getCurrentHp() - 50 > 0) {
-						// ua.takeDamage(10);
-						ua.setxLoc(rand.nextInt(1100));
-						ua.setyLoc(rand.nextInt(500));
-						ua.takeDamage(50);
+					if(deadly == true) {
+					
+						if(ua.getCurrentHp() - 50 > 0) {
+							// ua.takeDamage(10);
+							ua.setxLoc(rand.nextInt(1100));
+							ua.setyLoc(rand.nextInt(500));
+							ua.takeDamage(50);
+						} else {
+							ua.setxLoc(siberiaX);
+							ua.setyLoc(siberiaY);
+						}
+					
 					} else {
-						ua.setxLoc(siberiaX);
-						ua.setyLoc(siberiaY);
+					hurtPacman();
 					}
 				}
 			} else if(ua.getType() == "Peon") {
 				if(pacRect.contains(ua.getxLoc(), ua.getyLoc())) {
-					if(ua.getCurrentHp() - 50 > 0) {
-						// ua.takeDamage(10);
-						ua.setxLoc(rand.nextInt(1100));
-						ua.setyLoc(rand.nextInt(500));
-						ua.takeDamage(50);
+					if(deadly == true) {
+					
+						if(ua.getCurrentHp() - 50 > 0) {
+							// ua.takeDamage(10);
+							ua.setxLoc(rand.nextInt(1100));
+							ua.setyLoc(rand.nextInt(500));
+							ua.takeDamage(50);
+						} else {
+							ua.setxLoc(siberiaX);
+							ua.setyLoc(siberiaY);
+						}
+					
 					} else {
-						ua.setxLoc(siberiaX);
-						ua.setyLoc(siberiaY);
+					hurtPacman();
 					}
 				}
 			}
 		}
 	}
+
+	private void pacIsDeadly() {
+		for (Pacman p : pacmen) {
+			if(p.getIsStrong()) {
+				deadly = true;
+			} else {
+				deadly = false;
+			}
+		}
+	}
+
+	private void hurtPacman() {
+		for (Pacman p : pacmen) {
+			p.setxLoc(siberiaX);
+			p.setyLoc(siberiaY);
+		}
+	}
+
+	
 
 	private class MoveListener implements ActionListener {
 
@@ -887,7 +902,7 @@ public class RTSPanel extends JPanel {
 					if (ua.containsPoint(e.getX(), e.getY())) {
 						// System.out.println(ua.getId());
 						// ua.setVelocity(0);
-						selectedUnit = ua;
+						// selectedUnit = ua;
 						ua.setIsSelected(true);
 						selectedUnits.add(ua);
 						// System.out.println(selectedUnit.toString());
@@ -985,31 +1000,6 @@ public class RTSPanel extends JPanel {
 
 	} // ******************************* end KnightBtnAction class
 		// *********************************************
-
-	private class FileAction implements ActionListener {
-		public void actionPerformed(ActionEvent arg0) {
-			JFileChooser fc = new JFileChooser();
-			fc.setCurrentDirectory(new File("."));
-			int result = fc.showOpenDialog(RTSPanel.this);
-			if (result == JFileChooser.APPROVE_OPTION) {
-				File selected = fc.getSelectedFile();
-				try {
-					loadData(selected);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		private void loadData(File file) throws IOException {
-			System.out.println("file info: " + file);
-			Scanner data = new Scanner(file);
-			while (data.hasNext()) {
-				System.out.println(data.nextLine());
-			}
-
-		}
-	}
 
 } // ******************************** END MAIN CLASS
 	// **********************************************
