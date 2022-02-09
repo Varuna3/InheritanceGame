@@ -621,37 +621,6 @@ public class RTSPanel extends JPanel {
 	// }
 	//
 	// }
-
-	private void checkCollision() {
-		for (UnitAbstract ua : units) {
-			if(ua.getType() == "Pacman") {
-				pacX = ua.getxLoc();
-				pacY = ua.getyLoc();
-			}
-							
-			if(ua.getType() == "Archer") {
-				if(ua.containsPoint(pacX, pacY)) {
-					ua.setxLoc(siberiaX);
-					ua.setyLoc(siberiaY);
-				}
-			}
-
-			if(ua.getType() == "Peon") {
-				if(ua.containsPoint(pacX, pacY)) {
-					ua.setxLoc(siberiaX);
-					ua.setyLoc(siberiaY);
-				}
-			}
-
-			if(ua.getType() == "Knight") {
-				if(ua.containsPoint(pacX, pacY)) {
-					ua.setxLoc(siberiaX);
-					ua.setyLoc(siberiaY);
-				}
-			}
-		}
-	}
-
 	Random rand = new Random();
 
 	private void ShouldTakeDamage() {
