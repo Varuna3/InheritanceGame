@@ -16,19 +16,15 @@ public class Knight extends VehicleAbstract {
 
 	@Override
 	public void attack() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void heal() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void move() {
-		// TODO Auto-generated method stub
 		
 	}
 

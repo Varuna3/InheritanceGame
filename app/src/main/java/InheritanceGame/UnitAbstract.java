@@ -3,8 +3,6 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.util.Random;
 
-import javax.lang.model.util.ElementScanner6;
-
 public abstract class UnitAbstract implements UnitInterface, Cloneable, Comparable<Object>{
 	private int id;
 	protected int hp;

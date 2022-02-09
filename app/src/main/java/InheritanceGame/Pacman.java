@@ -1,5 +1,4 @@
 package InheritanceGame;
-import javax.swing.ImageIcon;
 import java.awt.Image;
 
 public class Pacman extends BipedalAbstract {
@@ -52,12 +51,12 @@ public class Pacman extends BipedalAbstract {
 
 	@Override
 	public void attack() {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void heal() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -65,7 +64,7 @@ public class Pacman extends BipedalAbstract {
 
 	@Override
 	public void move() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
