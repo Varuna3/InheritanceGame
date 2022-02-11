@@ -34,6 +34,7 @@ public class RTSPanel extends JPanel {
 	private List<UnitAbstract> units = new ArrayList<UnitAbstract>();
 	private List<UnitAbstract> selectedUnits = new ArrayList<UnitAbstract>();
 	private List<Pacman> pacmen = new ArrayList<Pacman>();
+	private List<Carrot> carrots = new ArrayList<Carrot>();
 	// public static Queue<UnitAbstract> selectedQueue = new LinkedList<>();
 
 	private JButton knightBtn, peonBtn, archerBtn, pacmanBtn, exitBtn, startBtn, pauseBtn, resetBtn;
@@ -53,6 +54,8 @@ public class RTSPanel extends JPanel {
 	private int velocityX;
 	private int velocityY;
 
+	private Carrot carrot;
+
 	private int selectionRectx;
 	private int selectionRecty;
 	private int selectionRectBRX;
@@ -69,6 +72,7 @@ public class RTSPanel extends JPanel {
 		moveTimer = new javax.swing.Timer(5000, new MoveListener());
 		moveTimer.start();
 
+		carrot = new Carrot(200, 200);
 		// alfred = new Peon(400, 500);
 		// lance = new Knight(800, 100);
 		// units.add(alfred);
@@ -85,6 +89,7 @@ public class RTSPanel extends JPanel {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		g.drawImage(bg, 0, 0, 1920, 1080, null);
+		g.drawImage(carrot.getSelectedImage(), carrot.getxLoc(), carrot.getyLoc(), carrot.getScaleX(), carrot.getScaleY(), null);
 		repaint();
 		for (UnitAbstract ua : units) {
 			g.drawImage(ua.getSelectedImage(), ua.getxLoc(), ua.getyLoc(), ua.getScaleX(), ua.getScaleY(), null);
