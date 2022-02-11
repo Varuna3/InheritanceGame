@@ -5,8 +5,13 @@ public class Carrot extends UnitAbstract{
         super(x, y, 100, 10, 200, 5, GetImage.get("/Images/Carrot.png"),
 				GetImage.get("/Images/Carrot.png"));
 		// Change to Image.
+<<<<<<< HEAD
 		setScaleX(100);
 		setScaleY(100);
+=======
+		setScaleX(170);
+		setScaleY(170);
+>>>>>>> b30927c0d93524586ddd4556c1c5fc60c22854d6
 		setType("Carrot");
     }
 
@@ -27,4 +32,8 @@ public class Carrot extends UnitAbstract{
         // TODO Auto-generated method stub
         
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> b30927c0d93524586ddd4556c1c5fc60c22854d6

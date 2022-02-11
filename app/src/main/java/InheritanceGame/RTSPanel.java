@@ -60,6 +60,8 @@ public class RTSPanel extends JPanel {
 	private int velocityX;
 	private int velocityY;
 
+	private Carrot carrot;
+
 	private int selectionRectx;
 	private int selectionRecty;
 	private int selectionRectBRX;
@@ -76,6 +78,7 @@ public class RTSPanel extends JPanel {
 		moveTimer = new javax.swing.Timer(5000, new MoveListener());
 		moveTimer.start();
 
+		carrot = new Carrot(200, 200);
 		// alfred = new Peon(400, 500);
 		// lance = new Knight(800, 100);
 		// units.add(alfred);
@@ -95,7 +98,12 @@ public class RTSPanel extends JPanel {
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+<<<<<<< HEAD
 		g.drawImage(bg, 0, 0, boundx, boundy, null);
+=======
+		g.drawImage(bg, 0, 0, 1920, 1080, null);
+		g.drawImage(carrot.getSelectedImage(), carrot.getxLoc(), carrot.getyLoc(), carrot.getScaleX(), carrot.getScaleY(), null);
+>>>>>>> b30927c0d93524586ddd4556c1c5fc60c22854d6
 		repaint();
 		g.drawImage(badFruit.getSelectedImage(), badFruit.getxLoc(), badFruit.getyLoc(), badFruit.getScaleX(), badFruit.getScaleY(), null);
 		for (UnitAbstract ua : units) {
