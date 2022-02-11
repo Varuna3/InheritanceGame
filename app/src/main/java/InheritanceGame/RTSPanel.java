@@ -28,19 +28,26 @@ import javax.swing.KeyStroke;
 import javax.swing.border.Border;
 
 public class RTSPanel extends JPanel {
+	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private int boundx = (int)screenSize.getWidth();
+	private int boundy = (int)screenSize.getWidth();
+
 	private Image bg;
 	private javax.swing.Timer timer;
 	private javax.swing.Timer moveTimer;
 	private List<UnitAbstract> units = new ArrayList<UnitAbstract>();
 	private List<UnitAbstract> selectedUnits = new ArrayList<UnitAbstract>();
 	private List<Pacman> pacmen = new ArrayList<Pacman>();
+	private List<Carrot> carrots = new ArrayList<Carrot>();
 	// public static Queue<UnitAbstract> selectedQueue = new LinkedList<>();
 
 	private JButton knightBtn, peonBtn, archerBtn, pacmanBtn, exitBtn, startBtn, pauseBtn, resetBtn;
 	private JButton removeKBtn, removePBtn, removeABtn, removePMBtn;
 	private JMenuBar mb;
 	private JPanel northPnl;
+	Carrot badFruit = new Carrot(200, 200);
 
+	// private Carrot badFruit = new Carrot(200, 200);
 
 	private int siberiaX = 100000000, siberiaY = 1000000000;
 
@@ -75,6 +82,10 @@ public class RTSPanel extends JPanel {
 		// units.add(lance);
 		loadGUIObjects();
 		loadMenu();
+
+		
+		carrots.add(badFruit);
+		// g.drawImage();
 		// loadUnits();
 
 		addMouseListener(new MouseListener());
@@ -84,8 +95,9 @@ public class RTSPanel extends JPanel {
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		g.drawImage(bg, 0, 0, 1920, 1080, null);
+		g.drawImage(bg, 0, 0, boundx, boundy, null);
 		repaint();
+		g.drawImage(badFruit.getSelectedImage(), badFruit.getxLoc(), badFruit.getyLoc(), badFruit.getScaleX(), badFruit.getScaleY(), null);
 		for (UnitAbstract ua : units) {
 			g.drawImage(ua.getSelectedImage(), ua.getxLoc(), ua.getyLoc(), ua.getScaleX(), ua.getScaleY(), null);
 			repaint();
@@ -118,6 +130,8 @@ public class RTSPanel extends JPanel {
 			wanderAround();
 			ShouldTakeDamage();
 			// ******************************** End-New-Logic **********************
+			
+
 			repaint();
 		}
 
@@ -139,8 +153,8 @@ public class RTSPanel extends JPanel {
 		for (UnitAbstract ua : units) {
 			if(ua.getType() == "Archer") {
 				// if(ua.getxDest() == ua.getxLoc() && ua.getyDest() == ua.getyLoc()) {
-					ua.setxDest(rand.nextInt(1700));
-					ua.setyDest(rand.nextInt(900));
+					ua.setxDest(rand.nextInt(boundx));
+					ua.setyDest(rand.nextInt(boundy));
 				// }
 			}
 		}
@@ -148,8 +162,8 @@ public class RTSPanel extends JPanel {
 		for (UnitAbstract ua : units) {
 			if(ua.getType() == "Peon") {
 				// if(ua.getxDest() == ua.getxLoc() && ua.getyDest() == ua.getyLoc()) {
-					ua.setxDest(rand.nextInt(1700));
-					ua.setyDest(rand.nextInt(900));
+					ua.setxDest(rand.nextInt(boundx));
+					ua.setyDest(rand.nextInt(boundy));
 					System.out.println(ua.getVelocity());
 				// }
 			}
@@ -158,8 +172,8 @@ public class RTSPanel extends JPanel {
 		for (UnitAbstract ua : units) {
 			if(ua.getType() == "Knight") {
 				// if(ua.getxDest() == ua.getxLoc() && ua.getyDest() == ua.getyLoc()) {
-					ua.setxDest(rand.nextInt(1700));
-					ua.setyDest(rand.nextInt(900));
+					ua.setxDest(rand.nextInt(boundx));
+					ua.setyDest(rand.nextInt(boundy));
 				// }
 			}
 		}
@@ -481,8 +495,8 @@ public class RTSPanel extends JPanel {
 
 		for (int i = 0; i < 1; i++) {
 			Random rand = new Random();
-			int x = rand.nextInt(1600) + 50;
-			int y = rand.nextInt(800) + 50;
+			int x = rand.nextInt(1200) + 50;
+			int y = rand.nextInt(600) + 50;
 			int h = rand.nextInt(2); // 0 = up, 1 = down
 			int b = rand.nextInt(2); // 0 = left, 1 = right
 			Knight k = new Knight(x, y);
@@ -501,8 +515,8 @@ public class RTSPanel extends JPanel {
 
 		for (int i = 0; i < 1; i++) {
 			Random rand = new Random();
-			int x = rand.nextInt(1600) + 50;
-			int y = rand.nextInt(800) + 50;
+			int x = rand.nextInt(1200) + 50;
+			int y = rand.nextInt(600) + 50;
 			int h = rand.nextInt(2); // 0 = up, 1 = down
 			int b = rand.nextInt(2); // 0 = left, 1 = right
 			Peon k = new Peon(x, y);
@@ -521,8 +535,8 @@ public class RTSPanel extends JPanel {
 
 		for (int i = 0; i < 1; i++) {
 			Random rand = new Random();
-			int x = rand.nextInt(1600) + 50;
-			int y = rand.nextInt(800) + 50;
+			int x = rand.nextInt(1200) + 50;
+			int y = rand.nextInt(600) + 50;
 			int h = rand.nextInt(2); // 0 = up, 1 = down
 			int b = rand.nextInt(2); // 0 = left, 1 = right
 			Archer k = new Archer(x, y);
@@ -541,8 +555,8 @@ public class RTSPanel extends JPanel {
 
 		for (int i = 0; i < 1; i++) {
 			Random rand = new Random();
-			int x = rand.nextInt(1600) + 50;
-			int y = rand.nextInt(800) + 50;
+			int x = rand.nextInt(1200) + 50;
+			int y = rand.nextInt(600) + 50;
 			int h = rand.nextInt(2); // 0 = up, 1 = down
 			int b = rand.nextInt(2); // 0 = left, 1 = right
 			Pacman k = new Pacman(x, y);
@@ -810,6 +824,14 @@ public class RTSPanel extends JPanel {
 							ua.setxDest(null);
 							ua.setyDest(null);
 							break;
+						}
+
+						if(ua.getRect().contains(badFruit.getRect())){
+							if(ua.getType() == "Pacman") {
+								ua.setxLoc(siberiaX);
+								ua.setyLoc(siberiaY);
+							}
+
 						}
 
 						
